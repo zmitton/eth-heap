@@ -1,0 +1,25 @@
+{
+  "name": "eth-heap",
+  "version": "1.0.0",
+  "description": "ethereum-optimized heap data structure",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "ethereum",
+    "heap",
+    "priority",
+    "queue",
+    "solidity"
+  ],
+  "author": "Zac Mitton",
+  "license": "ISC",
+  "dependencies": {
+    "treeify": "^1.1.0",
+    "truffle": "^4.1.14"
+  }
+}

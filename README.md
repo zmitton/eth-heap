@@ -21,14 +21,14 @@ Heaps allow for insertion, deletion removing, and finding the Maximum
 This particular heap also supports findById, and remove by id which solves race conditions while preserving the logarithmic upper-bound.
 But you can extend this to any arbitrary data by pointing to a struct that you define yourself in a separate mapping.
 
-These characteristics could also be achieved by an AVL Tree or a Red-Black Tree, but they are much more complicated (possibly buggy), and have an overhead of about 300k gas. This contract can do it in about 100k (depends on the function of course. extractMax is cheapest).
+These characteristics could also be achieved by an AVL Tree or a Red-Black Tree, but they are much more complicated (and therefore possibly riskier), and have a larger gas cost overhead.
 
 This approach is a good middle ground between optimization and security. The more you try to add optimizations the more complicated the logic can get, and therefore, the (potentially) less secure the contract could be. This contract is both simpler, and cheaper than an AVL tree. However, heaps are only partially sorted, if you need full sorting use the grove AVL tree by Piper.
 
 The GAS costs of this are as follows:
 ```
 SIZE:   10
-GAS insert 135097
+GAS insert        135097
 GAS extractById:   88524
 GAS extractMax:    87734
 
@@ -47,7 +47,7 @@ GAS insert        279883
 GAS extractById:1 255645
 GAS extractMax:   254855
 ```
-This can be expected to rise very modestly. probably never more than 200k. I plan to make some charts on this to clarify.
+This can be expected to rise very modestly. It will never exceed the block-gas-limit and "lock-up".
 
 The Heap was built to accommodate the "order book" (priority queue) for a decentralized exchange where. 
   - Users can make (and remove) as many orders as they wish

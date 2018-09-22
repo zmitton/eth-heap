@@ -27,9 +27,25 @@ This approach is a good middle ground between optimization and security. The mor
 
 The GAS costs of this are as follows:
 ```
-  insert  extractMax (gas/tx)
-====================
-113513  112639/67639
+SIZE:   10
+GAS insert 135097
+GAS extractById:   88524
+GAS extractMax:    87734
+
+SIZE:  100
+GAS insert        189392
+GAS extractById:  163432
+GAS extractMax:   162642
+
+SIZE: 1000
+GAS insert        243686
+GAS extractById:  217242
+GAS extractMax:   216452
+
+SIZE: 3870
+GAS insert        279883
+GAS extractById:1 255645
+GAS extractMax:   254855
 ```
 This can be expected to rise very modestly. probably never more than 200k. I plan to make some charts on this to clarify.
 
@@ -61,10 +77,11 @@ library Heap{ // max-heap
         int128 priority;
     }
 
-    function insert(Data storage self, int128 priority) internal returns(Node){}
+    function init(Data storage self) internal {}
 
+    function insert(Data storage self, int128 priority) internal returns(Node){}
     function extractMax(Data storage self) internal returns(Node){}
-    function extract(Data storage self, int128 id) internal returns(Node){}
+    function extractById(Data storage self, int128 id) internal returns(Node){}
 
     function dump(Data storage self) internal view returns(Node[]){}
     function getById(Data storage self, int128 id) internal view returns(Node){}
@@ -77,3 +94,7 @@ library Heap{ // max-heap
 See contracts/HeapClient.sol for how to hook into the library.
 
 This is a max-heap. If you would like to use it as a min-heap, simply reverse the sign before inputing by multiplying by -1 (Although I haven't tested that yet).
+
+call `init()` once on the library before use
+
+bad input will result in returning the zero (default) set. They will not throw errors. This allows you to handle errors in your own flexible way. if returning a node, check for node.id==0.

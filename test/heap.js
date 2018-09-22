@@ -5,11 +5,16 @@ const Node = Helpers.Node
 
 contract('Heap',  async(accounts) => {
   it("should be heap-like", async() => {
-    let heap, max, oldMax, size
+    let heap, max, oldMax, size, gas
     let dumpSig = "0xe4330545" //keccak("dump")[0-8]
 
     heap = await HeapClient.new()
+    await heap.init({from:accounts[0]})
 
+    size = await heap.size.call()
+    console.log("SIZE: ", size.toNumber())
+    gas = await heap.insert.estimateGas(1023186, {from: accounts[0]})
+    console.log("GAS insert", gas)
     txHash = await heap.insert.sendTransaction(500, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(8, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(2, {from: accounts[0]})
@@ -19,7 +24,8 @@ contract('Heap',  async(accounts) => {
     txHash = await heap.insert.sendTransaction(500, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(14, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(9, {from: accounts[0]})
-
+    gas = await heap.insert.estimateGas(1023186, {from: accounts[0]})
+    console.log("GAS: insert 10th", gas)
     txHash = await heap.insert.sendTransaction(122, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(98, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(47, {from: accounts[0]})
@@ -31,7 +37,8 @@ contract('Heap',  async(accounts) => {
     txHash = await heap.insert.sendTransaction(313, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(359234, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(3592, {from: accounts[0]})
-
+    gas = await heap.insert.estimateGas(1023186, {from: accounts[0]})
+    console.log("GAS: insert 20th", gas)
     txHash = await heap.insert.sendTransaction(3529, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(359, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(2538, {from: accounts[0]})
@@ -42,7 +49,7 @@ contract('Heap',  async(accounts) => {
     txHash = await heap.insert.sendTransaction(2138, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(2186, {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(59, {from: accounts[0]})
-    
+
     getResponse = await web3.eth.call({to:heap.address, data: dumpSig})
     console.log(getResponse)
     new Heap(getResponse).print()

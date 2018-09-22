@@ -12,6 +12,11 @@ contract HeapClient{
             data.insert(priorities[i]);
         }
     }
+
+    function init() public {
+        data.init();
+    }
+
     function insert(int128 priority) public returns(int128){
         return data.insert(priority).id;
     }

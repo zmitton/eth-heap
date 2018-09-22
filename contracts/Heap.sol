@@ -14,6 +14,9 @@ library Heap{ // default max-heap
         int128 priority;
     }
 
+    //call init before anything else
+    function init(Data storage self) internal { if (self.nodes.length == 0) self.nodes.push(Node(0,0)); }
+
     function insert(Data storage self, int128 priority) internal returns(Node){
         if (self.nodes.length < 1) self.nodes.push(Node(0,0)); //initializes heap
         self.idCount++;

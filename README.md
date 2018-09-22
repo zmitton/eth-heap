@@ -1,7 +1,7 @@
 ## This is a Binary Heap
 
 ### How?
-```javascript
+```
 npm install eth-heap --save
 ```
 Then from a truffle contract, `import` the library
@@ -45,7 +45,7 @@ Here is the API. note that if you want to return the `Heap.Node` data types from
 
 ```solidity
 
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.4.23;
 
 library Heap{ // max-heap
 
@@ -64,7 +64,7 @@ library Heap{ // max-heap
     function insert(Data storage self, int128 priority) internal returns(Node){}
 
     function extractMax(Data storage self) internal returns(Node){}
-    function remove(Data storage self, int128 id) internal returns(Node){}
+    function extract(Data storage self, int128 id) internal returns(Node){}
 
     function dump(Data storage self) internal view returns(Node[]){}
     function getById(Data storage self, int128 id) internal view returns(Node){}

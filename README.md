@@ -1,11 +1,11 @@
 ## This is a Binary Heap
 
 ### How?
-```
+```javascript
 npm install eth-heap --save
 ```
 Then from a truffle contract, `import` the library
-```
+```solidity
 import "eth-heap/contracts/Heap.sol";
 
 ```

@@ -6,7 +6,6 @@ import "./Heap.sol";
 contract HeapClient{
     using Heap for Heap.Data;
     Heap.Data public data;
-    uint[] r;
 
     function heapify(int128[] priorities) public {
         for(uint i ; i < priorities.length ; i++){

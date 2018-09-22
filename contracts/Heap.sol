@@ -1,20 +1,20 @@
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.4.23;
 
-library Heap{ // max-heap
+library Heap{ // default max-heap
 
     uint constant ROOT_INDEX = 1;
 
     struct Data{
-        uint128 idCount;
+        int128 idCount;
         Node[] nodes; // root is index 1; index 0 not used
-        mapping (uint128 => uint) indices;   // unique id => node index
+        mapping (int128 => uint) indices;   // unique id => node index
     }
     struct Node{
-        uint128 id; //use with a mapping to store arbitrary object types
-        uint128 priority;
+        int128 id; //use with a mapping to store arbitrary object types
+        int128 priority;
     }
 
-    function push(Data storage self, uint128 priority) internal returns(Node){
+    function insert(Data storage self, int128 priority) internal returns(Node){
         if (self.nodes.length < 1) self.nodes.push(Node(0,0)); //initializes heap
         self.idCount++;
         self.nodes.length++;
@@ -22,16 +22,33 @@ library Heap{ // max-heap
         _bubbleUp(self, n, self.nodes.length-1);
         return n;
     }
-
-    function pop(Data storage self) internal returns(Node){
-        return _remove(self, ROOT_INDEX);
+    function extractMax(Data storage self) internal returns(Node){
+        return _extract(self, ROOT_INDEX);
     }
-    function remove(Data storage self, uint128 id) internal returns(Node){
+    function extractById(Data storage self, int128 id) internal returns(Node){
         uint i = self.indices[id];
-        return _remove(self, i);
+        return _extract(self, i);
     }
 
-    function _remove(Data storage self, uint i) private returns(Node){
+//view
+    function dump(Data storage self) internal view returns(Node[]){
+        return self.nodes;
+    }
+    function getById(Data storage self, int128 id) internal view returns(Node){
+        return getByIndex(self, self.indices[id]);
+    }
+    function getByIndex(Data storage self, uint i) internal view returns(Node){
+        return self.nodes.length > i ? self.nodes[i] : Node(0,0);
+    }
+    function getMax(Data storage self) internal view returns(Node){
+        return self.nodes.length > ROOT_INDEX ? self.nodes[ROOT_INDEX] : Node(0,0);
+    }
+    function size(Data storage self) internal view returns(uint){
+        return self.nodes.length > 0 ? self.nodes.length-1 : 0;
+    }
+
+//private
+    function _extract(Data storage self, uint i) private returns(Node){
         require(0 < i && i < self.nodes.length);
 
         Node memory extractedNode = self.nodes[i];
@@ -40,14 +57,14 @@ library Heap{ // max-heap
         Node memory tailNode = self.nodes[self.nodes.length-1];
         self.nodes.length--;
 
-        if(i < self.nodes.length){ // if removed node was not tail
+        if(i < self.nodes.length){ // if extractd node was not tail
             _bubbleUp(self, tailNode, i);
             _bubbleDown(self, self.nodes[i], i);// then try bubbling down
         }
         return extractedNode;
     }
     function _bubbleUp(Data storage self, Node memory n, uint i) private{ //√
-        assert(i > 0 && i < self.nodes.length);//remove after testing (condition deemed impossible)
+        assert(i > 0 && i < self.nodes.length);//extract after testing (condition deemed impossible)
 
         if(i==ROOT_INDEX || n.priority <= self.nodes[i/2].priority){
             _insert(self, n, i);
@@ -61,7 +78,7 @@ library Heap{ // max-heap
         uint cIndex = i*2; // init child index to left child
         Node memory child;
 
-        assert(0 < i && i < length); //remove after testing (condition deemed impossible)
+        assert(0 < i && i < length); //extract after testing (condition deemed impossible)
 
         if(length > cIndex)
             child = self.nodes[cIndex];
@@ -81,19 +98,5 @@ library Heap{ // max-heap
         self.indices[n.id] = i;
     }
 
-    function get(Data storage self) internal view returns(Node[]){
-        return self.nodes;
-    }
-    function getById(Data storage self, uint128 id) internal view returns(Node){
-        return getByIndex(self, self.indices[id]);
-    }
-    function getByIndex(Data storage self, uint i) internal view returns(Node){
-        return self.nodes.length > i ? self.nodes[i] : Node(0,0);
-    }
-    function max(Data storage self) internal view returns(Node){
-        return self.nodes.length > ROOT_INDEX ? self.nodes[ROOT_INDEX] : Node(0,0);
-    }
-    function size(Data storage self) internal view returns(uint){
-        return self.nodes.length > 0 ? self.nodes.length-1 : 0;
-    }
+
 }

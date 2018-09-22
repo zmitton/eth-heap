@@ -1,45 +1,47 @@
+// pragma solidity ^0.4.23;
+pragma experimental ABIEncoderV2;
 import "./Heap.sol";
 
-pragma experimental ABIEncoderV2;
 
 contract HeapClient{
     using Heap for Heap.Data;
     Heap.Data public data;
     uint[] r;
 
-    function heapify(uint128[] priorities) public {
+    function heapify(int128[] priorities) public {
         for(uint i ; i < priorities.length ; i++){
-            data.push(priorities[i]);
+            data.insert(priorities[i]);
         }
     }
-    function push(uint128 priority) public returns(uint128){
-        return data.push(priority).id;
+    function insert(int128 priority) public returns(int128){
+        return data.insert(priority).id;
     }
-    function pop() public returns(uint128){
-        return data.pop().priority;
+    function extractMax() public returns(int128){
+        return data.extractMax().priority;
     }
-    function remove(uint128 id) public returns(uint128){
-        return data.remove(id).priority;
+    function extractById(int128 id) public returns(int128){
+        return data.extractById(id).priority;
     }
-    function get() public view returns(Heap.Node[]){
-        return data.get();
+
+    function dump() public view returns(Heap.Node[]){
+        return data.dump();
     }
-    function getById(uint128 id) public view returns(uint128){
+    function getMax() public view returns(int128){
+        return data.getMax().priority;
+    }
+    function getById(int128 id) public view returns(int128){
         return data.getById(id).priority;
     }
-    function max() public view returns(uint128){
-        return data.max().priority;
+    function getByIndex(uint i) public view returns(int128){
+        return data.getByIndex(i).priority;
     }
     function size() public view returns(uint){
         return data.size();
     }
-    function getByIndex(uint i) public view returns(uint128){
-        return data.getByIndex(i).priority;
-    }
-    function idCount() public view returns(uint128){
+    function idCount() public view returns(int128){
         return data.idCount;
     }
-    function indices(uint128 id) public view returns(uint){
+    function indices(int128 id) public view returns(uint){
         return data.indices[id];
     }
     

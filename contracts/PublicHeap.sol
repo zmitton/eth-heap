@@ -1,9 +1,12 @@
-// pragma solidity ^0.4.23;
 pragma experimental ABIEncoderV2;
 import "./Heap.sol";
 
-
-contract HeapClient{
+// this is a simple contract that uses the heap library.
+// but it allows all data in the heap to be inserted and removed by anyone in the world!
+// so you wouldnt write your contract like this, but it shows how to interactive with 
+// the heap library. specifically you might use the "view" functions from below, but the 
+// insert/extractMax/extractById functions you probably would put inside restrictive logic
+contract PublicHeap{
     using Heap for Heap.Data;
     Heap.Data public data;
 
@@ -48,5 +51,4 @@ contract HeapClient{
     function indices(int128 id) public view returns(uint){
         return data.indices[id];
     }
-    
 }

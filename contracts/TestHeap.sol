@@ -1,3 +1,4 @@
+// pragma solidity 0.4.24;
 pragma experimental ABIEncoderV2;
 import "./Heap.sol";
 
@@ -6,7 +7,7 @@ import "./Heap.sol";
 // so you wouldnt write your contract like this, but it shows how to interactive with 
 // the heap library. specifically you might use the "view" functions from below, but the 
 // insert/extractMax/extractById functions you probably would put inside restrictive logic
-contract PublicHeap{
+contract TestHeap{
     using Heap for Heap.Data;
     Heap.Data public data;
 
@@ -16,9 +17,7 @@ contract PublicHeap{
         }
     }
 
-    function init() public {
-        data.init();
-    }
+    constructor() public { data.init(); }
 
     function insert(int128 priority) public returns(int128){
         return data.insert(priority).id;
@@ -33,11 +32,17 @@ contract PublicHeap{
     function dump() public view returns(Heap.Node[]){
         return data.dump();
     }
+    function getIdMax() public view returns(int128){
+        return data.getMax().id;
+    }
     function getMax() public view returns(int128){
         return data.getMax().priority;
     }
     function getById(int128 id) public view returns(int128){
         return data.getById(id).priority;
+    }
+    function getIdByIndex(uint i) public view returns(int128){
+        return data.getByIndex(i).id;
     }
     function getByIndex(uint i) public view returns(int128){
         return data.getByIndex(i).priority;

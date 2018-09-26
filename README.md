@@ -26,17 +26,19 @@ These characteristics could also be achieved by an AVL Tree or a Red-Black Tree,
 This approach is a good middle ground between optimization and security. The more you try to add optimizations the more complicated the logic can get, and therefore, the (potentially) less secure the contract could be. This contract is both simpler, and cheaper than an AVL tree. However, heaps are only partially sorted, if you need full sorting use the grove AVL tree by Piper.
 
 The *average* GAS costs of `insert()` and `extractById` are about 100,000 gas regardless of size, but can reach similar costs as `extractMax()`. This average should not depend on size of the heap (unless under an attack in which it will only rise logarithmically) for `extractMax()` the gas price is expected to rise logarithmically. Here are some stats:
-```
-    extractMax()
-   SIZE  |     GAS
-------------------
-     10  |   87734
-    100  |  162642
-    200  |  179946
-    500  |  200096
-   1000  |  216452
-   3870  |  254855
-```
+
+Test was performed on 500 item sets
+
+ExtractById Average Gas Costs:   69461
+Insert Average Gas Costs:       101261
+ExtractMax Average Gas Costs:   170448
+
+
+![Insert Stats](https://raw.githubusercontent.com/zmitton/eth-heap/master/img/insertStats.png)
+
+![Extract Stats](https://raw.githubusercontent.com/zmitton/eth-heap/master/img/extractStats.png)
+
+
 This can be expected to rise very modestly. It will never exceed the block-gas-limit and "lock-up".
 
 The Heap was built to accommodate the "order book" (priority queue) for a decentralized exchange where. 

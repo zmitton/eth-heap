@@ -1,4 +1,4 @@
-pragma solidity ^0.4.23;
+pragma solidity 0.4.24;
 
 library Heap{ // default max-heap
 
@@ -31,8 +31,7 @@ library Heap{ // default max-heap
         return _extract(self, ROOT_INDEX);
     }
     function extractById(Data storage self, int128 id) internal returns(Node){
-        uint i = self.indices[id];
-        return _extract(self, i);
+        return _extract(self, self.indices[id]);
     }
 
 //view

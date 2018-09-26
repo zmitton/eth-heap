@@ -1,5 +1,4 @@
 pragma solidity 0.4.24;
-// pragma experimental ABIEncoderV2;
 import "./Heap.sol";
 
 // kovan: 0x186c67B6c7f35C35f1Ac87Fb659681aA96b16fFb
@@ -19,7 +18,7 @@ contract BountyHeap{
     function () public payable{}
 
     function withdraw() public{
-        require(now > createdAt + 2592000); //60*60*24*30 = 30 days
+        require(now > createdAt + 25920); //60*60*24*30 = 2592000 = 30 days
         author.transfer(address(this).balance);
     }
     function breakCompletenessTreeProperty(uint indexHole, uint indexNonHole, address recipient) public{
@@ -44,7 +43,6 @@ contract BountyHeap{
         }
     }
 
-
     function heapify(int128[] priorities) public {
         for(uint i ; i < priorities.length ; i++){
             data.insert(priorities[i]);
@@ -59,16 +57,24 @@ contract BountyHeap{
     function extractById(int128 id) public returns(int128){
         return data.extractById(id).priority;
     }
-    // // unfortunately the function below requires the experimental compiler
-    // // which cant be verified on etherscan. Hopefully soon it will be standard.
+//view
+    // // Unfortunately the function below requires the experimental compiler
+    // // which cant be verified on etherscan or used natively with truffle.
+    // // Hopefully soon it will be standard.
     // function dump() public view returns(Heap.Node[]){
     //     return data.dump();
     // }
+    function getIdMax() public view returns(int128){
+        return data.getMax().id;
+    }
     function getMax() public view returns(int128){
         return data.getMax().priority;
     }
     function getById(int128 id) public view returns(int128){
         return data.getById(id).priority;
+    }
+    function getIdByIndex(uint i) public view returns(int128){
+        return data.getByIndex(i).id;
     }
     function getByIndex(uint i) public view returns(int128){
         return data.getByIndex(i).priority;

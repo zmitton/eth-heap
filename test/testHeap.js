@@ -5,19 +5,17 @@ const Node = Helpers.Node
 
 contract('TestHeap',  async(accounts) => {
   it("should be heap-like", async() => {
-    let heap, max, oldMax, size, gas, vals
-    let dumpSig = "0xe4330545" //keccak("dump")[0-8]
+    let heap, max, oldMax, size, gas
+    let dumpSig = "0xe4330545" //keccak("dump()")[0-8]
+    let getMaxSig = "0x3075f552" //keccak("getMax()")[0-8]
 
-    vals = Array.from({length: 10000}, () => Math.floor(Math.random() * 100000))
-    i = 0
+    let vals = Array.from({length: 10000}, () => Math.floor(Math.random() * 100000))
+    let i = 0
 
     heap = await TestHeap.new()
-    // await heap.init({from:accounts[0]})
 
     size = await heap.size.call()
-    console.log("SIZE: ", size.toNumber())
-    gas = await heap.insert.estimateGas(1023186, {from: accounts[0]})
-    console.log("GAS insert", gas)
+
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
@@ -27,10 +25,8 @@ contract('TestHeap',  async(accounts) => {
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
-    gas = await heap.insert.estimateGas(1023186, {from: accounts[0]})
-    console.log("GAS: insert 10th", gas)
+
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
-    console.log("TXHASH", txHash.receipt.gasUsed)
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
@@ -41,8 +37,7 @@ contract('TestHeap',  async(accounts) => {
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
-    gas = await heap.insert.estimateGas(1023186, {from: accounts[0]})
-    console.log("GAS: insert 20th", gas)
+
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
@@ -58,8 +53,8 @@ contract('TestHeap',  async(accounts) => {
     console.log(getResponse)
     new Heap(getResponse).print()
 
-    max = await heap.getMax.call()
-    assert.equal(max.toNumber(), Math.max(...vals.slice(0,i)))
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.equal(new Node(max).priority, Math.max(...vals.slice(0,i)))
 
     txHash = await heap.extractById.sendTransaction(5, {from: accounts[0]})
     txHash = await heap.extractById.sendTransaction(20, {from: accounts[0]})
@@ -74,44 +69,44 @@ contract('TestHeap',  async(accounts) => {
 
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
-    max = await heap.getMax.call()
-    assert.isTrue(oldMax.toNumber() >= max.toNumber())
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
 
     size = await heap.size.call()
     assert.equal(size.toNumber(), 10)
@@ -121,6 +116,5 @@ contract('TestHeap',  async(accounts) => {
     new Heap(getResponse).print()
 
   });
-
 });
 

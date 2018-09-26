@@ -29,9 +29,9 @@ The *average* GAS costs of `insert()` and `extractById` are about 100,000 gas re
 
 Test was performed on 500 item sets
 
-ExtractById Average Gas Costs:   69461
-Insert Average Gas Costs:       101261
-ExtractMax Average Gas Costs:   170448
+- ExtractById Average Gas Costs:   69461
+- Insert Average Gas Costs:       101261
+- ExtractMax Average Gas Costs:   170448
 
 
 ![Insert Stats](https://raw.githubusercontent.com/zmitton/eth-heap/master/img/insertStats.png)

@@ -1,10 +1,9 @@
-const TestHeap = artifacts.require("TestHeap");
 const BountyHeap = artifacts.require("BountyHeap");
 const Helpers = require("../index")
 const Heap = Helpers.Heap
 const Node = Helpers.Node
 
-contract('TestHeap',  async(accounts) => {
+contract('BountyHeap',  async(accounts) => {
   it("should be heap-like", async() => {
     let heap, max, oldMax, size, gas
     let getByIndexSig = ""
@@ -99,7 +98,7 @@ contract('TestHeap',  async(accounts) => {
       return str.slice(0,str.length-1) + "}, PlotRange -> {{0, 600}, {0, 300000}}, PlotStyle -> Red]"
     }
 
-    heap = await TestHeap.new()
+    heap = await BountyHeap.new()
     await processHeap(vals)
 
   });

@@ -45,7 +45,7 @@ library Heap{ // default max-heap
         return self.nodes.length > i ? self.nodes[i] : Node(0,0);
     }
     function getMax(Data storage self) internal view returns(Node){
-        return self.nodes.length > ROOT_INDEX ? self.nodes[ROOT_INDEX] : Node(0,0);
+        return getByIndex(self, ROOT_INDEX);
     }
     function size(Data storage self) internal view returns(uint){
         return self.nodes.length > 0 ? self.nodes.length-1 : 0;

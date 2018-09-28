@@ -87,7 +87,7 @@ library Heap{ // default max-heap
             _bubbleUp(self, n, i/2);
         }
     }
-    function _bubbleDown(Data storage self, Node memory n, uint i) private{
+    function _bubbleDown(Data storage self, Node memory n, uint i) private{//√
         uint length = self.nodes.length;
         uint cIndex = i*2; // left child index
 

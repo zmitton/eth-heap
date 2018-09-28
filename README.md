@@ -6,7 +6,9 @@ A [Binary Heap](https://en.wikipedia.org/wiki/Binary_heap) data structure is the
 #### Block-Gas-Limit and the iteration problem
 Allowing users to insert data into a contract can result in an issue where it costs too much gas to iterate through. This is a gas-limit-attack.
 
-If directly using an array, an attacker can fill the array to the point where iterating through it will cost more gas than is allowed in a single transaction (the `block-gas-limit` *currently 8 million*). A Heap mitigates these issues because the structure does not require any iteration through all the elements.
+If directly using an array, an attacker can fill the array to the point where iterating through it will cost more gas than is allowed in a single transaction (the `block-gas-limit` *currently 8 million*). When such a contract is **worth** attacking, it **will** be attacked. Don't write contracts this way. Its not safe.
+
+A Heap mitigates these issues because the structure does not require iteration through the elements. It instead iterates *only* through the *height* of a tree.
 
 #### Data structures to the rescue
 Unfortunately, even though many tree structures have O log(n) costs under normal circumstances, they are **not** safe to use in public Ethereum contracts, because attackers can find conditions that *degenerate* the tree toward O(n) costs. Degenerating a tree is when you make one branch get really long.
@@ -93,8 +95,13 @@ Bad input will result in returning the (default) zero set. For the most part, th
     function size(Data storage self) internal view returns(uint){}
 ```
 
-## Gas Tests 
-All gas costs rise logarithmically at worst
+## Bounty
+There will soon be a challenge to break the heap structure with anonymous ETH payouts for Critical all types of bugs. More info coming soon. "watch" the repo to be notified.
+
+## Gas Usage 
+All gas costs rise logarithmically at worst, but the *simplicity* of a binary heap makes it particularly cheaper than alternatives. Because the heap is a *complete tree*, it is able to be implemented using an array. This makes navigating the structure much cheaper. Instead of pointers to children and parent nodes, it uses simple arithmetic to move from child to parent (`index/2`) and parent to leftChild or rightChild (`index*2` or `index*2+1`).
+
+![Array Tree](https://raw.githubusercontent.com/zmitton/eth-heap/master/img/arrayTree.png)
 
 #### performed on 500 item sets
 - `extractById()` Average Gas Costs:   69461

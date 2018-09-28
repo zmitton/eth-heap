@@ -3,7 +3,7 @@ pragma solidity 0.4.24;
 // Eth Heap
 // Author: Zac Mitton
 // Please use at your own risk. Not yet production-ready.
-// Free to use and open source. Make yourself lots of money with it.
+// Free to use and open source. Make lots of money with it.
 
 library Heap{ // default max-heap
 
@@ -21,11 +21,11 @@ library Heap{ // default max-heap
 
     //call init before anything else
     function init(Data storage self) internal{
-        if (self.nodes.length == 0) self.nodes.push(Node(0,0));
+        if(self.nodes.length == 0) self.nodes.push(Node(0,0));
     }
 
     function insert(Data storage self, int128 priority) internal returns(Node){//√
-        assert(self.nodes.length > 0); //must initialize heap
+        if(self.nodes.length == 0){ init(self); }// test on-the-fly-init
         self.idCount++;
         self.nodes.length++;
         Node memory n = Node(self.idCount, priority);
@@ -41,10 +41,11 @@ library Heap{ // default max-heap
 
 //view
     function dump(Data storage self) internal view returns(Node[]){
+        //note: Empty set will return `[Node(0,0)]`. uninitialized will return `[]`.
         return self.nodes;
     }
     function getById(Data storage self, int128 id) internal view returns(Node){
-        return getByIndex(self, self.indices[id]);
+        return getByIndex(self, self.indices[id]);//test that all these return the emptyNode
     }
     function getByIndex(Data storage self, uint i) internal view returns(Node){
         return self.nodes.length > i ? self.nodes[i] : Node(0,0);
@@ -59,7 +60,7 @@ library Heap{ // default max-heap
 //private
     function _extract(Data storage self, uint i) private returns(Node){//√
         // require(0 < i && i < self.nodes.length);// replaced with conditional below
-        if(self.nodes.length <= i && i <= 0){ return Node(0,0); }
+        if(self.nodes.length <= i || i <= 0){ return Node(0,0); }
 
         Node memory extractedNode = self.nodes[i];
         delete self.indices[extractedNode.id];
@@ -74,9 +75,9 @@ library Heap{ // default max-heap
         return extractedNode;
     }
     function _bubbleUp(Data storage self, Node memory n, uint i) private{//√
-        // from insert:    0<i√ ; i<self.nodes.length√
-        // from _extract:  0<i√ ; i<self.nodes.length√
-        // from _bubbleUp: 0<i√ ; i<self.nodes.length√
+        // from insert:    0<i √ ; i<self.nodes.length √
+        // from _extract:  0<i √ ; i<self.nodes.length √
+        // from _bubbleUp: 0<i √ ; i<self.nodes.length √
         // assert(0 < i && i < self.nodes.length);//extract after testing (condition deemed impossible)
 
         if(i==ROOT_INDEX || n.priority <= self.nodes[i/2].priority){
@@ -86,42 +87,33 @@ library Heap{ // default max-heap
             _bubbleUp(self, n, i/2);
         }
     }
-
-
     function _bubbleDown(Data storage self, Node memory n, uint i) private{
         uint length = self.nodes.length;
-        uint cIndex = i*2; // init to left child index
+        uint cIndex = i*2; // left child index
 
-        //from extract 0<i  ; i<self.nodes.length 
-        assert(0 < i && i < length); //extract after testing (condition deemed impossible)
+        //from extract      0<i √ ; i<self.nodes.length √
+        //from _bubbleDown  0<i √ ; i<self.nodes.length √
+        // assert(0 < i && i < length); //extract after testing (condition deemed impossible)
 
         if(length <= cIndex){
             _insert(self, n, i);
         }else{
-            Node memory child = self.nodes[cIndex];
-            //make sure boolean functions always "short-circuit" in solidity
-            if(length > cIndex+1 && self.nodes[cIndex+1].priority > child.priority ){
-                child = self.nodes[++cIndex];// verify ++ gets executed first here
+            Node memory largestChild = self.nodes[cIndex];
+            // make sure short-circuiting is always in play
+            if(length > cIndex+1 && self.nodes[cIndex+1].priority > largestChild.priority ){
+                largestChild = self.nodes[++cIndex];// TEST ++ gets executed first here
             }
-            if(child.priority <= n.priority){ //ISSUE: priority 0 should be valid!
+
+            if(largestChild.priority <= n.priority){ //TEST: priority 0 is valid! negative ints work
                 _insert(self, n, i);
             }else{
                 _insert(self, child, i);
                 _bubbleDown(self, n, cIndex);
             }
         }
-        //make sure boolean functions always "short-circuit" in solidity
-
-
     }
 
-
-
-
-
-
-
-    function _insert(Data storage self, Node memory n, uint i) private{
+    function _insert(Data storage self, Node memory n, uint i) private{//√
         self.nodes[i] = n;
         self.indices[n.id] = i;
     }

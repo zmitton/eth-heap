@@ -56,6 +56,11 @@ library Heap{ // default max-heap
     function size(Data storage self) internal view returns(uint){
         return self.nodes.length > 0 ? self.nodes.length-1 : 0;
     }
+    function isNode(Node n) internal pure returns(bool){ return n.id > 0; }
+    // For Your Information
+    // leftChildIndex =>  currentIndex * 2
+    // rightChildIndex => currentIndex * 2 + 1
+    // parentIndex =>     currentIndex / 2
 
 //private
     function _extract(Data storage self, uint i) private returns(Node){//√
@@ -107,7 +112,7 @@ library Heap{ // default max-heap
             if(largestChild.priority <= n.priority){ //TEST: priority 0 is valid! negative ints work
                 _insert(self, n, i);
             }else{
-                _insert(self, child, i);
+                _insert(self, largestChild, i);
                 _bubbleDown(self, n, cIndex);
             }
         }

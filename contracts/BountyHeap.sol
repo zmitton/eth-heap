@@ -17,31 +17,45 @@ contract BountyHeap{
 
     function () public payable{}
 
-    function withdraw() public{
+    function endBounty() public{
         require(now > createdAt + 25920); //60*60*24*30 = 2592000 = 30 days
-        author.transfer(address(this).balance);
+        author.transfer(address(this).balance); //any remaining ETH goes back to me
     }
-    function breakCompletenessTreeProperty(uint indexHole, uint indexNonHole, address recipient) public{
-        if(data.getByIndex(indexHole).id == 0){ //hole exists
-            if(data.getByIndex(indexNonHole).id != 0 && indexHole < indexNonHole){
-                recipient.transfer(address(this).balance);
-            }
-        }
+
+    function breakCompletenessTreeProperty(uint holeIndex, uint filledIndex, address recipient) public{
+        require(holeIndex > 0); // 0 index is empty by design (doesn't count)
+        require(data.getByIndex(holeIndex).id == 0); //holeIndex has nullNode
+        require(data.getByIndex(filledIndex).id != 0); // filledIndex has a node
+        require(holeIndex < filledIndex); //HOLE IN MIDDLE OF HEAP!
+        recipient.transfer(address(this).balance);
     }
     function breakParentsHaveGreaterPriorityProperty(uint indexChild, address recipient) public{
-        if(data.nodes.length > indexChild && indexChild > 1){ // parent 
-            if(data.nodes[indexChild].priority > data.nodes[indexChild/2].priority){
-                recipient.transfer(address(this).balance);
-            }
-        }
+        Heap.Node memory child = data.getByIndex(indexChild);
+        Heap.Node memory parent = data.getByIndex(indexChild/2);
+
+        require(Heap.isNode(parent));
+        require(Heap.isNode(child));
+        require(child.priority > parent.priority); // CHILD PRIORITY LARGER THAN PARENT!
+        recipient.transfer(address(this).balance);
     }
     function breakIdMaintenanceProperty(int128 id, address recipient) public{
-        if(data.indices[id] != 0){ // id exists in mapping structure
-            if(data.nodes[data.indices[id]].id != id){ //but refers to wrong or absent node in array
-                recipient.transfer(address(this).balance);
-            }
-        }
+        require(data.indices[id] != 0); //id exists in mapping
+        require(data.nodes[data.indices[id]].id != id); // buts points to node with a different id
+        recipient.transfer(address(this).balance);
     }
+    function breakIdUniqueness(uint index1, uint index2, address recipient) public{
+        require(index1 != index2); //2 different positions in the heap
+
+        Heap.Node memory node1 = data.getByIndex(index1);
+        Heap.Node memory node2 = data.getByIndex(index2);
+
+        require(Heap.isNode(node1));
+        require(Heap.isNode(node2));
+        require(node1.id == node2.id); //HAVE 2 NODES WITH THE SAME ID!
+        recipient.transfer(address(this).balance);
+
+    }
+
 
     function heapify(int128[] priorities) public {
         for(uint i ; i < priorities.length ; i++){

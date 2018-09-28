@@ -15,6 +15,8 @@ Unfortunately, even though many tree structures have O log(n) costs under normal
 
 *Self Balancing* trees solve this issue, because they cannot degenerate. They rotate or swap nodes during insertion to stay balanced, thus preserving their O log(n) costs even under **worst-case** conditions.
 
+![Binary Heap](https://raw.githubusercontent.com/zmitton/eth-heap/master/img/binaryHeap.png)
+
 #### Options
 A Binary Heap is a *partially-sorted*, self balancing tree that has worst-case characteristics proportional to O log(n).
 
@@ -58,15 +60,15 @@ Call `init()` once on the library before use
 #### Data Store
 Heaps allow for **insertion**, **extraction**, and **extraction of the Maximum**.
 
-This particular heap also supports **getById**, and **extractById** which solves race conditions. `struct Node`s are `id`, `priority` pairs, but you can extend this to any arbitrary data by pointing to a `struct` that you define in a separate `mapping`, with matching `id` from the heap.
+This particular heap also supports `getById()`, and `extractById()` which solves race conditions. `struct Node`s have only `id` and `priority` properties (packed into 1 storage slot), but you can extend this to any arbitrary data by pointing to a `struct` that you define in a separate `mapping`, with matching `id` from the heap.
 
-Think of it simply as a data store. `insert()` things into it, `remove()`, or find or remove the largest element in the heap (`getMax()` / `extractMax()`). Don't manipulate the data except through the API, or risk corrupting the heap integrity.
+Think of it simply as a data store. *insert* things into it, *extract*, or find / remove the largest element. Don't manipulate the heap structure except through the API, or risk corrupting its integrity.
 
 #### Max-heap / Min-heap. 
 This is a *max-Heap*, if you would like to use it as a *min-heap*, simply reverse the sign before inputing (multiply by -1 (Although I haven't tested this yet)).
 
 #### Error Handling
-Bad input will result in returning the (default) zero set. For the most part, the functions will not throw errors. This allows you to handle errors in your own flexible way. When returning a node, check for `node.id == 0`.
+Bad input will result in returning the (default) zero node `Node(0,0)`. For the most part, the functions will not throw any errors. This allows you to handle errors in your own way. If you'd like to throw an error in these situations, perform `require(Heap.isNode(myNode));` on the returned node;
 
 #### API. 
 *Note that if you want to return the `Heap.Node` data types from a public function, you have to use the experimental ABIEncoderV2 for now.*
@@ -96,10 +98,10 @@ Bad input will result in returning the (default) zero set. For the most part, th
 ```
 
 ## Bounty
-There will soon be a challenge to break the heap structure with anonymous ETH payouts for Critical all types of bugs. More info coming soon. "watch" the repo to be notified.
+There will soon be a challenge to break the heap structure. with anonymous ETH payouts for critical and all types of bugs. More info coming soon. "watch" the repo to be notified.
 
 ## Gas Usage 
-All gas costs rise logarithmically at worst, but the *simplicity* of a binary heap makes it particularly cheaper than alternatives. Because the heap is a *complete tree*, it is able to be implemented using an array. This makes navigating the structure much cheaper. Instead of pointers to children and parent nodes, it uses simple arithmetic to move from child to parent (`index/2`) and parent to leftChild or rightChild (`index*2` or `index*2+1`).
+All gas costs rise logarithmically at worst, but the *simplicity* of a binary heap makes it particularly cheaper than alternatives. Because the heap is a *complete tree*, it is able to be implemented using an array. This makes navigating the structure much cheaper. Instead of pointers to children and parent nodes (requiring the most expensive thing: storage space), it uses simple arithmetic to move from child to parent (`index/2`) and parent to leftChild or rightChild (`index*2` or `index*2+1`).
 
 ![Array Tree](https://raw.githubusercontent.com/zmitton/eth-heap/master/img/arrayTree.png)
 

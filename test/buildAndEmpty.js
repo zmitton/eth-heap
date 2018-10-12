@@ -9,7 +9,7 @@ contract('BountyHeap',  async(accounts) => {
 
   it("should keep its max property during all insertion/deletions ", async() => {
     console.log("\n  Reticulating splines...")
-    heap = await BountyHeap.new()
+    heap = await BountyHeap.new(accounts[0])
     await processHeap(vals)
 
     async function processHeap(vals){

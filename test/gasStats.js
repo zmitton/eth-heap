@@ -98,7 +98,7 @@ contract('BountyHeap',  async(accounts) => {
       return str.slice(0,str.length-1) + "}, PlotRange -> {{0, 600}, {0, 300000}}, PlotStyle -> Red]"
     }
 
-    heap = await BountyHeap.new()
+    heap = await BountyHeap.new(accounts[0])
     await processHeap(vals)
 
   });

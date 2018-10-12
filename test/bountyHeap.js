@@ -41,7 +41,7 @@ async function assertRevert(promise, ...txArgs) {
 }
 
 let bountyHeap, max, createdAt, author, time0, time1, bountyAddress, bountyBal, tenEth,
-  myPromise, size, idCount, nodeId2
+  myPromise, size, idCount, nodeId2, authorBal, authorAddress
 
 contract('BountyHeap', async(accounts) => {
   it("should be empty to start, then hold max", async() => {
@@ -76,26 +76,33 @@ contract('BountyHeap', async(accounts) => {
     assert.equal(bountyBal, tenEth)
   });
   it("should not be able to immediatly end by me", async() => {
-    let time0 = Date.now()/1000
+    authorAddress = "0x1F4E7Db8514Ec4E99467a8d2ee3a63094a904e7A"
+    time0 = Date.now()/1000
     createdAt = await bountyHeap.createdAt.call()
     expect(createdAt.toNumber()).to.be.closeTo(time0, 5)
 
     author = await bountyHeap.author.call()
-    assert.equal(author, accounts[0]);
+    assert.equal(author, authorAddress);
 
     myPromise = bountyHeap.endBounty.sendTransaction
     await assertRevert(myPromise, {from: accounts[0]})
 
     bountyBal = await web3.eth.getBalance(bountyHeap.address)
     assert.equal(bountyBal, tenEth, "ETH should still be there")
+
+    authorBal = await web3.eth.getBalance(authorAddress)
+    assert.equal(authorBal, 0, "author should have no ETH yet")
+
   });
   it("should fast forward and eventually be endable", async() => {
     await increaseTime(2592001)
     await bountyHeap.endBounty.sendTransaction({from: accounts[0]})
     bountyBal = await web3.eth.getBalance(bountyHeap.address)
     size = await bountyHeap.size.call()
-    // console.log("SIZE OF: ", size.toNumber())
     assert.equal(bountyBal, 0, "ETH should be gone")
+
+    authorBal = await web3.eth.getBalance(authorAddress)
+    assert.equal(authorBal, tenEth, "author should have the ETH back in his account")
   });
 });
 
@@ -108,7 +115,6 @@ contract('BountyHeap COMPLETENESS', async(accounts) => {
     await bountyHeap.insert.sendTransaction(103, {from: accounts[2]})
     await bountyHeap.insert.sendTransaction(102, {from: accounts[3]})
     max = await bountyHeap.getMax.call()
-    // console.log("max: ", max.toNumber())
     assert.equal(max.toNumber(), 103)
 
     bountyAddress = await bountyHeap.address
@@ -141,7 +147,7 @@ contract('BountyHeap COMPLETENESS', async(accounts) => {
     bountyBal = await web3.eth.getBalance(bountyHeap.address)
     assert.equal(bountyBal, tenEth, "ETH should still be there")
   });
-  it("should REVERT when filledArg is less than holeArg (cause thats not a hole)", async() => {
+  it("should REVERT when filledArg is < holeArg (cause thats not a hole)", async() => {
     await assertRevert(myPromise, size + 1, size - 1, accounts[0],{from: accounts[3]})
 
     bountyBal = await web3.eth.getBalance(bountyHeap.address)
@@ -191,7 +197,7 @@ contract('BountyHeap PARENTS HAVE GREATER PRIORITY', async(accounts) => {
     bountyBal = await web3.eth.getBalance(bountyHeap.address)
     assert.equal(bountyBal, tenEth, "ETH should still be there")
   });
-  it("should REVERT when sent child index of 1 or less (parent doesnt exist)", async() => {
+  it("should REVERT when child index is 1 or less (parent doesnt exist)", async() => {
     await assertRevert(myPromise, 1, accounts[0],{from: accounts[3]})
 
     bountyBal = await web3.eth.getBalance(bountyHeap.address)
@@ -204,7 +210,7 @@ contract('BountyHeap PARENTS HAVE GREATER PRIORITY', async(accounts) => {
     bountyBal = await web3.eth.getBalance(bountyHeap.address)
     assert.equal(bountyBal, tenEth, "ETH should still be there")
   });
-  it("should REVERT when sent child index is more than size (child doesnt exist)", async() => {
+  it("should REVERT when child index is > size (child doesnt exist)", async() => {
     await assertRevert(myPromise, 4, accounts[0],{from: accounts[3]})
     await assertRevert(myPromise, 8, accounts[0],{from: accounts[3]})
 
@@ -383,9 +389,3 @@ contract('BountyHeap ID UNIQUENESS', async(accounts) => {
     assert.equal(bountyBal, tenEth, "ETH should still be there")
   });
 });
-
-
-
-
-
-// check if we have public functions without the extranious definitions needed

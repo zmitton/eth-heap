@@ -7,7 +7,7 @@ import "./Heap.sol";
 // so you wouldnt write your contract like this, but it shows how to interactive with 
 // the heap library. specifically you might use the "view" functions from below, but the 
 // insert/extractMax/extractById functions you probably would put inside restrictive logic
-contract TestHeap{
+contract PublicHeap{
     using Heap for Heap.Data;
     Heap.Data public data;
 

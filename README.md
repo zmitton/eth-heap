@@ -98,7 +98,47 @@ Bad input will result in returning the (default) zero node `Node(0,0)`. For the 
 ```
 
 ## Bounty
-There will soon be a challenge to break the heap structure. with anonymous ETH payouts for critical and all types of bugs. More info coming soon. "watch" the repo to be notified.
+It is extremely important for Ethereum code to be bullet-proof. ETH ETC and BTC are the most hostile programing environments ever created. We are in a paradigm shift, and bounties are an important part of the solution. This bounty will start at 10 ETH, and increase over time for at least a month.
+
+Welcome. This is different from many other bounties where you would "report" a bug and hope that we reimburse you fairly. This bounty has the ETH locked right into the smart contract, ready to be withdrawn instantly upon exploitation of any bug. 
+
+In fact: if you find a potential attack vector you should tell no one until you successfully exploit it yourself (securing the ETH to your account). You could even do this anonymously, but I would *prefer* you find a way to document the bug after-the-fact (it would really save me some time).
+
+### Bounty Rules
+
+First I wrote the `Heap.sol` library. Then, I wrote a second contract `BountyHeap.sol` (utilizing the library), which exposes all the operations to a single "public" heap that anyone can send transactions to. **In this second contract**, I took the definitions of what makes a heap a heap, and wrote public functions that release funds *iff* these properties are broken.
+
+
+### The Heap Property
+In a heap, all child nodes, should have a value less-than-or-equal-to their parents. If you are able to get the contract into any state where this is untrue, simply call the 
+```
+breakParentsHaveGreaterPriority(uint indexChild, address recipient)
+```
+function, and the contract will release its full bounty.
+
+There are many other subtle properties that must stay intact for the heap to be secure. I've made corresponding functions that each release **the entire bounty** if exploited. I will describe the others below.
+
+### Completeness Property
+```solidity
+breakCompleteness(uint holeIndex, uint filledIndex, address recipient)
+```
+A Binary Heap is a [*complete tree*](https://en.wikipedia.org/wiki/Binary_tree#Types_of_binary_trees) . This means it can be, and in this case **is** implemented using a dynamic-sized array (no pointers). The array should contain no empty spots (even as nodes are inserted and extracted from any position). This architecture actually allowed for a significant gas cost reduction! If this property is broken, the heap is sure to be corrupted.
+
+### ID Maintenance Properties
+The rest of the functions have to do with a design decision I made to give each node an unique `id`. This `id` allows the heap to *organize* data of any type. For example, if you want a `buyOrder` struct with the highest price, find it using the heap's `getMax()`, and then lookup your `buyOrder` in a separate mapping using the returned `id`. The `id` also allows a user to remove a specific node whereas using another value (like its `index`), could change unpredictably due to other transactions from other users being mined before it.
+
+To benefit these use cases a mapping from `id` to `index` (in the `nodes` array) was used. It is carefully updated behind the scenes whenever a node is inserted, deleted, or moved.
+
+If there is more than one node with the same `id`, something has gone terribly wrong. take your ETH using:
+```solidity
+function breakIdUniqueness(uint index1, uint index2, address recipient)
+```
+
+Furthermore, there should never be an `id` in the mapping that points to an empty or differing node in the array or vice-versa. Use the following to prove otherwise:
+```solidity
+function breakIdMaintenance(int128 id, address recipient)
+function breakIdMaintenance2(uint index, address recipient)
+```
 
 ## Gas Usage 
 All gas costs rise logarithmically at worst, but the *simplicity* of a binary heap makes it particularly cheaper than alternatives. Because the heap is a *complete tree*, it is able to be implemented using an array. This makes navigating the structure much cheaper. Instead of pointers to children and parent nodes (requiring the most expensive thing: storage space), it uses simple arithmetic to move from child to parent (`index/2`) and parent to leftChild or rightChild (`index*2` or `index*2+1`).
@@ -111,14 +151,19 @@ All gas costs rise logarithmically at worst, but the *simplicity* of a binary he
 - `extractMax()` Average Gas Costs:   170448
 
 
-*Heuristic: The cost of these functions goes up by about 20,000 gas every time you double the number of data items.*
+*Heuristic: The cost of these functions can go up by about 20,000 gas every time you double the number of data items.*
 
 - red lines => worst-case data
 - green lines => best-case data
-- blue dots (insert/extractMax) => randomized data
-- brown dots (extractById) => randomized data
+- blue dots (insert) => randomized data
 
 ![Insert Stats](https://raw.githubusercontent.com/zmitton/eth-heap/master/img/insertStats.png)
+
+
+- red lines => worst-case data
+- green lines => best-case data
+- blue dots (extractMax) => randomized data
+- brown dots (extractById) => randomized data
 
 ![Extract Stats](https://raw.githubusercontent.com/zmitton/eth-heap/master/img/extractStats.png)
 

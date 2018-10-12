@@ -57,10 +57,6 @@ library Heap{ // default max-heap
         return self.nodes.length > 0 ? self.nodes.length-1 : 0;
     }
     function isNode(Node n) internal pure returns(bool){ return n.id > 0; }
-    // For Your Information
-    // leftChildIndex =>  currentIndex * 2
-    // rightChildIndex => currentIndex * 2 + 1
-    // parentIndex =>     currentIndex / 2
 
 //private
     function _extract(Data storage self, uint i) private returns(Node){//√

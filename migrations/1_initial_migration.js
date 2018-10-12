@@ -1,9 +1,11 @@
 var Migrations = artifacts.require("./Migrations.sol");
 var Heap = artifacts.require("./Heap.sol");
-var TestHeap = artifacts.require("./TestHeap.sol");
+var PublicHeap = artifacts.require("./PublicHeap.sol");
+var BountyHeap = artifacts.require("./BountyHeap.sol");
 
 module.exports = function(deployer, network) {
   deployer.deploy(Migrations);
   deployer.deploy(Heap);
-  deployer.deploy(TestHeap)
+  deployer.deploy(PublicHeap)
+  deployer.deploy(BountyHeap)
 };

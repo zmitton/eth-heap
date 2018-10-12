@@ -1,9 +1,9 @@
-const TestHeap = artifacts.require("TestHeap");
+const PublicHeap = artifacts.require("PublicHeap");
 const Helpers = require("../index")
 const Heap = Helpers.Heap
 const Node = Helpers.Node
 
-contract('TestHeap',  async(accounts) => {
+contract('PublicHeap',  async(accounts) => {
   it("should be heap-like", async() => {
     let heap, max, oldMax, size, gas
     let dumpSig = "0xe4330545" //keccak("dump()")[0-8]
@@ -12,7 +12,7 @@ contract('TestHeap',  async(accounts) => {
     let vals = Array.from({length: 10000}, () => Math.floor(Math.random() * 100000))
     let i = 0
 
-    heap = await TestHeap.new()
+    heap = await PublicHeap.new()
 
     size = await heap.size.call()
 
@@ -49,6 +49,10 @@ contract('TestHeap',  async(accounts) => {
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
     txHash = await heap.insert.sendTransaction(vals[i++], {from: accounts[0]})
 
+    // the following uses `web3.eth.call` instead of `heap.dump.call` because 
+    // truffle doesn't functions with return variables of `struct` types.
+    // We also have to use the experimental encoder in solidity. Hopefully soon,
+    // both features will be supported.
     getResponse = await web3.eth.call({to:heap.address, data: dumpSig})
     console.log(getResponse)
     new Heap(getResponse).print()
@@ -71,45 +75,56 @@ contract('TestHeap',  async(accounts) => {
     oldMax = max
     max = await web3.eth.call({to: heap.address, data: getMaxSig})
     assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
-    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
-    oldMax = max
-    max = await web3.eth.call({to: heap.address, data: getMaxSig})
-    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
-    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
-    oldMax = max
-    max = await web3.eth.call({to: heap.address, data: getMaxSig})
-    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
-    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
-    oldMax = max
-    max = await web3.eth.call({to: heap.address, data: getMaxSig})
-    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
-    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
-    oldMax = max
-    max = await web3.eth.call({to: heap.address, data: getMaxSig})
-    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
-    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
-    oldMax = max
-    max = await web3.eth.call({to: heap.address, data: getMaxSig})
-    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
-    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
-    oldMax = max
-    max = await web3.eth.call({to: heap.address, data: getMaxSig})
-    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
-    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
-    oldMax = max
-    max = await web3.eth.call({to: heap.address, data: getMaxSig})
-    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
-    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
-    oldMax = max
-    max = await web3.eth.call({to: heap.address, data: getMaxSig})
-    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
+
     txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
     oldMax = max
     max = await web3.eth.call({to: heap.address, data: getMaxSig})
     assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
 
+    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
+    oldMax = max
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
+
+    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
+    oldMax = max
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
+
+    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
+    oldMax = max
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
+
+    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
+    oldMax = max
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
+
+    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
+    oldMax = max
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
+
+    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
+    oldMax = max
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
+
+    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
+    oldMax = max
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
+
+    txHash = await heap.extractMax.sendTransaction({from: accounts[0]})
+    oldMax = max
+    max = await web3.eth.call({to: heap.address, data: getMaxSig})
+    assert.isTrue(new Node(oldMax).priority >= new Node(max).priority)
+
+
     size = await heap.size.call()
     assert.equal(size.toNumber(), 10)
+
 
     getResponse = await web3.eth.call({to:heap.address, data: dumpSig})
     console.log(getResponse)

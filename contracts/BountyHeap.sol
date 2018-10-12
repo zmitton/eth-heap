@@ -62,7 +62,7 @@ contract BountyHeap{
 
   function heapify(int128[] priorities) public {
     for(uint i ; i < priorities.length ; i++){
-    data.insert(priorities[i]);
+      data.insert(priorities[i]);
     }
   }
   function insert(int128 priority) public returns(int128){

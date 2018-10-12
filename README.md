@@ -102,12 +102,13 @@ It is extremely important for Ethereum code to be bullet-proof. ETH ETC and BTC 
 
 Welcome. This is different from many other bounties where you would "report" a bug and hope that we reimburse you fairly. This bounty has the ETH locked right into the smart contract, ready to be withdrawn instantly upon exploitation of any bug. 
 
-In fact: if you find a potential attack vector you should tell no one until you successfully exploit it yourself (securing the ETH to your account). You could even do this anonymously, but I would *prefer* you find a way to document the bug after-the-fact (it would really save me some time).
+In fact: if you find a potential attack vector you should tell no one until you successfully exploit it yourself (securing the ETH to your account). You could even do this anonymously, but I would *prefer* you find a way to document the bug after-the-fact (it would really save me some time). Open a Github issue after executing your exploit.
 
-### Bounty Rules
+### Bounty Rules 
+
+[Mainnet Address:](https://etherscan.io/address/0xd01c0bd7f22083cfc25a3b3e31d862befb44deeb#code) 0xd01c0bd7f22083cfc25a3b3e31d862befb44deeb
 
 First I wrote the `Heap.sol` library. Then, I wrote a second contract `BountyHeap.sol` (utilizing the library), which exposes all the operations to a single "public" heap that anyone can send transactions to. **In this second contract**, I took the definitions of what makes a heap a heap, and wrote public functions that release funds *iff* these properties are broken.
-
 
 ### The Heap Property
 In a heap, all child nodes, should have a value less-than-or-equal-to their parents. If you are able to get the contract into any state where this is untrue, simply call the 
@@ -139,6 +140,7 @@ Furthermore, there should never be an `id` in the mapping that points to an empt
 function breakIdMaintenance(int128 id, address recipient)
 function breakIdMaintenance2(uint index, address recipient)
 ```
+
 
 ## Gas Usage 
 All gas costs rise logarithmically at worst, but the *simplicity* of a binary heap makes it particularly cheaper than alternatives. Because the heap is a *complete tree*, it is able to be implemented using an array. This makes navigating the structure much cheaper. Instead of pointers to children and parent nodes (requiring the most expensive thing: storage space), it uses simple arithmetic to move from child to parent (`index/2`) and parent to leftChild or rightChild (`index*2` or `index*2+1`).

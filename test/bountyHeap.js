@@ -76,7 +76,7 @@ contract('BountyHeap', async(accounts) => {
     assert.equal(bountyBal, tenEth)
   });
   it("should not be able to immediatly end by me", async() => {
-    authorAddress = "0x1F4E7Db8514Ec4E99467a8d2ee3a63094a904e7A"
+    authorAddress = "0x0000000000000000000000000000000000000123"
     time0 = Date.now()/1000
     createdAt = await bountyHeap.createdAt.call()
     expect(createdAt.toNumber()).to.be.closeTo(time0, 5)

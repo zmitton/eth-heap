@@ -79,7 +79,7 @@ contract('BountyHeap', async(accounts) => {
     authorAddress = "0x0000000000000000000000000000000000000123"
     time0 = Date.now()/1000
     createdAt = await bountyHeap.createdAt.call()
-    expect(createdAt.toNumber()).to.be.closeTo(time0, 5)
+    expect(createdAt.toNumber()).to.be.closeTo(time0, 50)
 
     author = await bountyHeap.author.call()
     assert.equal(author, authorAddress);

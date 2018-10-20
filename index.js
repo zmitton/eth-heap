@@ -1,15 +1,11 @@
 const treeify = require('treeify');
 
 class Heap extends Array{
-    constructor(rpcResponse){
+    constructor(rpcResponse, numStructItems = 2){
       super(0)
-      super.push(new Node("0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"))
-      this.parse(rpcResponse)
-    }
-    parse(rpcResponse){
-        for (var i = 258; i < rpcResponse.length ; i=i+128){
-            super.push(new Node(rpcResponse.slice(i, i+128)))
-        }
+      for (var i = 130; i < rpcResponse.length ; i=i+64*numStructItems){
+        super.push(new Node(rpcResponse.slice(i, i+64*numStructItems)))
+      }
     }
     print(){
         console.log("\n warning: left/right children might appear switched")
@@ -28,18 +24,27 @@ class Heap extends Array{
 }
 
 class Node{
-    constructor(rpcResponse){
-        if(rpcResponse.slice(0,2) != "0x" ){
-            rpcResponse = "0x" + rpcResponse
+    // numStructItems is 4 for the orderBookHeap, 2 otherwise
+    constructor(rpcResponse, numStructItems = 2){
+        if(rpcResponse.slice(0,2) == "0x" ){
+            rpcResponse = rpcResponse.slice(2, rpcResponse.length)
         }
-        this.id = parseInt(rpcResponse.slice(0, 66))
+        this.id = parseInt("0x" + rpcResponse.slice(0, 66))
         this.priority = parseInt("0x" + rpcResponse.slice(66, 130))
     }
+    id(){ return parseInt(this[0]) }
+    priority(){ return parseInt(this[1]) }
+    price(){ return this.priority() }//alias
+    user(){ return this[2].slice(26, this[2].length) }
+    volume(){ return parseInt(this[3]) }
+
     print(){
       let str = "(" + this.id.toString() + ")" + this.priority.toString() + " "
       process.stdout.write(str)
     }
 }
+
+
 
 
 module.exports = {Heap, Node}

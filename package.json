@@ -1,6 +1,6 @@
 {
   "name": "eth-heap",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "ethereum-optimized heap data structure",
   "main": "index.js",
   "directories": {
